@@ -45,7 +45,7 @@ $wgAutoloadClasses['BugzillaQueryRenderer']=
 
 $wgExtensionCredits['parserhook'][] = array(
         'name' => 'BugzillaReports',
-        'version' => '1.0',
+        'version' => '1.1-SNAPSHOT',
         'url' => 'http://www.mediawiki.org/wiki/Extension:Bugzilla_Reports',
         'author' => '[http://www.bemoko.com/bemoko/i/page/ian-homer Ian Homer]',
         'description' => 'Provide bugzilla reports'

@@ -1,5 +1,9 @@
 =Release Notes=
 
+==v1.1==
+
+* BUG : [#5] - deadline (or any date) range matches did not work, e.g. deadline=2008-12-01:2008-12-31
+
 ==v1.0 - 12th February 2009==
 
 * Style class for severity set for the the tr element (row element) containing the bug details, so that (if you want) you can style based on severity.  Style classes used are the exactly the same name as the severity value, e.g. "enhancement", "normal", "major", etc

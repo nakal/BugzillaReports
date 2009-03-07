@@ -2,8 +2,8 @@
 |name=BugzillaReports
 |author=[[User:Ian Homer|Ian Homer]]
 |type=parser function
-|version=1.0
-|update=February 12th, 2009
+|version=1.1-SNAPSHOT
+|update=March 7th, 2009
 |status=stable
 |mediawiki=1.13
 |license=GPLv2

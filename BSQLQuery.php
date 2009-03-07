@@ -744,7 +744,7 @@ abstract class BSQLQuery {
 			}
 			return date("Y-m-d",$value);
 		} else {
-			return "Y".$date;
+			return $date;
 		}
 	}
 	
