@@ -39,7 +39,7 @@ class BugzillaQuery extends BSQLQuery {
 		'estimated'			=> 'field-number',
 		'filters'			=> 'filters',		# Generic filter setting which can be used for custom fields
 		'flag'				=> 'field-special',
-		'format'			=> 'value',			# table (default), list or count
+		'format'			=> 'value',			# table (default), list, inline or count
 		'from'				=> 'field',
 		'group'				=> 'sort',
 		'groupformat'		=> 'value',
@@ -88,6 +88,7 @@ class BugzillaQuery extends BSQLQuery {
 		'columns'			=> 'id,priority,status,severity,version,product,summary,url',
 		'customprefix'		=> 'cf_',
 		'dependsstatus'		=> '!(CLOSED,VERIFIED,RESOLVED)',
+		'format'			=> 'table',
 		'implicitcustom'	=> 'false',			# Default to false since Bugzilla nowadays enforces custom
 		 										# fields to start with "cf_"
 		'noresultsmessage'	=> 'no bugzilla tickets were found',

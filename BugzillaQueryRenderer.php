@@ -50,15 +50,18 @@ class BugzillaQueryRenderer {
 			$this->output.="<h1>".$this->query->get('heading')."</h1>";
 		}
 		# Table start
-	    $this->output .= "<table class=\"bugzilla";
-		if ($this->query->is('sortable')) {
-			$this->output.=" sortable";
+		if ($this->query->get('format') != "inline") {
+		    $this->output .= "<table class=\"bugzilla";
+			if ($this->query->is('sortable')) {
+				$this->output.=" sortable";
+			}
+			if ($this->query->get('bar')) {
+				$this->output.=" bz_bar";
+			}
+			$this->output.="\">";
+		} else {
+			
 		}
-		if ($this->query->get('bar')) {
-			$this->output.=" bz_bar";
-		}
-		$this->output.="\">";
-
 		# Initialise details row logic
 		$detailsRowColumns=array();
 		$arrayOfDetailRowColumns=explode(",",$this->query->get('detailsrow'));
@@ -89,7 +92,7 @@ class BugzillaQueryRenderer {
 			
 		# Display table header
 		if ($this->query->get('headers')=="show" || (!$this->query->get('bar') && 
-				$this->query->get('format')!='list' && 
+				$this->query->get('format')=='table' &&
 				$this->query->get('headers')!="hide" &&
 				!$this->query->explitlyOneValue)) {
 	    	$this->output .= "<tr>";
@@ -250,34 +253,52 @@ class BugzillaQueryRenderer {
 			} else {
 				$class.="bz_row_odd";
 			}
-	    	$this->output .= "<tr class=\"".$class."\">";
-			if ($this->query->get('format') == "list") {
-				$this->output.="<td class=\"bz_list\" colspan=\"".
-					$this->numberOfMainRowColumns."\">";
-					if (array_key_exists("to",$this->query->getColumns())) {		
+			#
+			# Formatting for inline and list
+			#
+			if ($this->query->get('format') == "list" || $this->query->get('format') == "inline") {
+				if ($this->query->get('format') == "list") {
+					$this->output .= "<tr class=\"".$class."\">";		    	
+					$this->output.="<td class=\"bz_list\" colspan=\"".
+						$this->numberOfMainRowColumns."\">";
+				} else {
+					$this->output .= "<span>";
+					if ($count > 1) {
+						$this->output .= ", ";						
+					}
+				}
+				if (array_key_exists("to",$this->query->getColumns())) {		
+					$this->output.=
+						"[".$this->query->
+							format($line[$this->query->mapField('to')],
+							'to',"")."] ";
+				}
+				if (array_key_exists("deadline",$this->query->getColumns())) {
+					$deadline=$line[$this->query->mapField('deadline')];
+					if ($deadline) {
 						$this->output.=
-							"[".$this->query->
-								format($line[$this->query->mapField('to')],
-								'to',"")."] ";
+							"(".$this->query->format($deadline,"deadline","").
+							") ";
 					}
-					if (array_key_exists("deadline",$this->query->getColumns())) {
-						$deadline=$line[$this->query->mapField('deadline')];
-						if ($deadline) {
-							$this->output.=
-								"(".$this->query->format($deadline,"deadline","").
-								") ";
-						}
-					}
-					$this->output.=						
-						$this->query->
-							format($this->query->getDBValue($line,
-								$this->query->mapField('summary')),
-							'summary',"")." (#".
-						$this->query->
-							format($line[$this->query->mapField('id')],
-							'id',"").")";
-				$this->output.="</td>";		
+				}
+				$this->output.=						
+					$this->query->
+						format($this->query->getDBValue($line,
+							$this->query->mapField('summary')),
+						'summary',"")." (#".
+					$this->query->
+						format($line[$this->query->mapField('id')],
+						'id',"").")";
+				if ($this->query->get('format') == "list") {
+					$this->output .= "</td></tr>";
+				} else {
+					$this->output.="</span>";
+				}
+			#
+			# Default formatting
+			#
 			} elseif (!$this->query->get('hide')) {
+		    	$this->output .= "<tr class=\"".$class."\">";
 				foreach ($this->query->getColumns() as $column) {
 					$dbColumn=$this->query->mapField($column);
 					if (!$this->query->get('detailsrow') 
@@ -334,9 +355,9 @@ class BugzillaQueryRenderer {
 						}					
 						$this->output.="</td>";
 					}
-				}
+			    }
+			  	$this->output .= "</tr>";
 			}
-	      	$this->output .= "</tr>";
 		} 
 			if ($this->query->get('detailsrow')) {
 				$this->renderDetailsRow($detailsRowColumns,$line,
@@ -378,7 +399,9 @@ class BugzillaQueryRenderer {
 		}
 		
 	    # Table end
-	    $this->output .= "</table>";
+		if ($this->query->get('format') != "inline") {
+	    	$this->output .= "</table>";
+		}
 
 		return $this->output;
 	}
