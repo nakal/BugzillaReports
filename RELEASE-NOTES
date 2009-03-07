@@ -3,6 +3,7 @@
 ==v1.1==
 
 * BUG : [#5] - deadline (or any date) range matches did not work, e.g. deadline=2008-12-01:2008-12-31
+* BUG : [#6] - bugzilla query link not generated correctly for id matches, e.g. {{#bugzilla:status=*|id=1,2,3}}
 
 ==v1.0 - 12th February 2009==
 

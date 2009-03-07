@@ -161,6 +161,7 @@ class BugzillaQuery extends BSQLQuery {
 	);
 	# Bugzilla Query field names
 	var $fieldBZQuery=array (
+		'id'			=> 'bug_id',	
 		'milestone'		=> 'target_milestone',
 		'qa'			=> 'qa_contact',
 		'severity'		=> 'bug_severity',
