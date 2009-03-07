@@ -470,7 +470,7 @@ class BugzillaQuery extends BSQLQuery {
 		if ($this->get('format') == "count") {
 			$sql.="SELECT count(distinct(id)) as count from (";
 		}			
-		$sql.="SELECT bugs.bug_id as id";
+		$sql.="SELECT DISTINCT bugs.bug_id as id";
 		if ($this->isRequired("alias")) {
 			$sql.=", alias";
 		}
