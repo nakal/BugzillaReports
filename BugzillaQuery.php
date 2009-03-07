@@ -51,7 +51,7 @@ class BugzillaQuery extends BSQLQuery {
 												# starting with the custom field prefix
 		'instance'			=> 'value',			# Alternative bugzilla instance as defined in 
 												# LocalSettings configuration
-		'keywords'			=> 'field',
+		'keywords'			=> 'field-keywords',
 		'id'				=> 'field-id',
 		'link'				=> 'columns',		# Define rules for linking headings and values 
 												# through to wiki pages
@@ -417,6 +417,15 @@ class BugzillaQuery extends BSQLQuery {
 												", it should include '%3D', it was ".$arg);
 							}
 						}
+					} else if ($type == 'field-keywords') {
+						$where.="and EXISTS (SELECT keywordid,keywords.bug_id from ".
+							$this->connector->getTable("keywords")." as keywords ".
+							" LEFT JOIN ".
+							$this->connector->getTable("keyworddefs")." as keyworddefs ".
+							" on keywords.keywordid=keyworddefs.id ".							
+							" where keywords.bug_id=bugs.bug_id ".
+							$this->processField($column,$fieldValue,"field").
+							")";				
 					} else {
 						$where.=$this->processField($column,$fieldValue,$type);
 					}					
@@ -653,13 +662,6 @@ class BugzillaQuery extends BSQLQuery {
 				$this->connector->getTable("flags").
 				" where status='?' group by quickflagbugid) as ".
 				"quickflag on quickflag.quickflagbugid=bugs.bug_id";							 			
-		}
-		if ($this->isRequired("keywords")) {
-			$sql.=" LEFT JOIN ".
-				$this->connector->getTable("keywords").
-					" as keywords on bugs.bug_id=keywords.bug_id ".
-					" LEFT JOIN ". $this->connector->getTable("keyworddefs").
-					" as keyworddefs on keywords.keywordid=keyworddefs.id ";
 		}
 		if ($this->isRequired("from")) {
 			$sql.=" LEFT JOIN ".
