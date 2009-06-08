@@ -339,7 +339,7 @@ class BugzillaQueryRenderer {
 										"<span class=\"bug_id\">".
 										$line["id"].
 										"</span>\n".
-										$lastcomment.
+										$this->makeWikiSafe($lastcomment).
 										"</div>";
 								}
 							}
@@ -563,6 +563,22 @@ class BugzillaQueryRenderer {
 					join(",",array_keys($barArray)));
 		}
 		return $barArray;
+	}
+	
+	#
+	# Make markup safe for inclusion in 
+	#
+	# (1) Append a "." at the end of wiki style headings so that the markup
+	# does not get interpreted as wiki headings and get included in the TOC
+	# See issue [#22]
+	#
+	private function makeWikiSafe($s) {
+	  if (strpos($s,"=") > -1) {
+	    # Bit cheating here because I don't make sure the closing equals match
+	    # the starting equals, but it's good enough
+  	  $s=preg_replace('/^([=]+)([^=]*)=+[[:space:]]*$/m','$1$2$1.<br/>',$s);
+	  }
+	  return $s;
 	}
 }
 ?>

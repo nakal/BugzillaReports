@@ -7,6 +7,7 @@
 * BUG : [#5] - deadline (or any date) range matches did not work, e.g. deadline=2008-12-01:2008-12-31
 * BUG : [#6] - bugzilla query link not generated correctly for id matches, e.g. {{#bugzilla:status=*|id=1,2,3}}
 * BUG : [#12] - "worked_hours" field will be multiplied by the number of keywords you have, e.g. {{#bugzilla:debug=1|columns=+work,+keywords|status=*|keywords=analytics|sort=id|total=work}}
+* BUG : [#22] - support wiki style equals in comments without affecting the page TOC
 
 ==v1.0 - 12th February 2009==
 
