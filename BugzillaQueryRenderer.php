@@ -149,7 +149,7 @@ class BugzillaQueryRenderer {
 		$currentId=0;
 		$currentBlocksId=0;
 		$currentDependsId=0;
-	    while ($line = $this->connector->fetch($result)) {
+	  while ($line = $this->connector->fetch($result)) {
 			#
 			# Add group heading
 			#

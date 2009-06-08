@@ -2,7 +2,11 @@
 
 ==v1.1==
 
-* [#8] - Add a format to inline a bug report, e.g. {{#bugzilla:debug=1|id=661|status=*|format=inline}}
+* [#8]  - Add a format to inline a bug report, e.g. {{#bugzilla:debug=1|id=661|status=*|format=inline}}
+* [#13] - Added support for created filters, e.g. {{#bugzilla:created=-1m|createdformat=date}}
+* [#13] - Added support for filters on status change, e.g. {{#bugzilla:assigned=2009-05-01:2009-05-31}}, 
+  {{#bugzilla:resolved=2009-05-01:2009-05-31}}, {{#bugzilla:verified=2009-05-01:2009-05-31}},
+  {{#bugzilla:closed=2009-05-01:2009-05-31}}, {{#bugzilla:reopened=2009-05-01:2009-05-31}}
 * BUG : [#3] - Task repeated in report for tasks with multiple keywords when keywords displayed in report
 * BUG : [#5] - deadline (or any date) range matches did not work, e.g. deadline=2008-12-01:2008-12-31
 * BUG : [#6] - bugzilla query link not generated correctly for id matches, e.g. {{#bugzilla:status=*|id=1,2,3}}
