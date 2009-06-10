@@ -60,13 +60,13 @@ class BMysqlConnector {
 		 * with mediawiki then we will have changed the db for the mediawiki
 		 * access.
 		 */
-		$sql="select count(id) from ".$this->context->database.
+		$sql="select count(id) from `".$this->context->database."`".
 			".priority;";
 		$result=mysql_query($sql,$db);
 		if (!$result) {
 			$this->setError($this->context->getErrorMessage('bReport_nodb',
-				"Can't find test table 'priority' in database '".
-				$this->context->database."' using ".$sql.
+				"Can't find test table 'priority' in database ".
+				"`".$this->context->database."` using ".$sql.
 				" - this probably means your username and password set in the variable wgBugzillaReports are not correct."));
 			$db=null;			
 		} else if (mysql_error($db)) {
@@ -75,7 +75,7 @@ class BMysqlConnector {
 			$db=null;
 		} else if ($this->getRowCount($result) != 1) {
 			$this->setError($this->context->getErrorMessage('bReport_nodb',
-				$this->context->database."-".$this->getRowCount($result)));
+				"`".$this->context->database."`-".$this->getRowCount($result)));
 			$db=null;
 		}
 		$this->free($result);
@@ -112,7 +112,7 @@ class BMysqlConnector {
 	}
 
 	public function getTable($table) {
-		return $this->context->database.".".$table;
+		return "`".$this->context->database."`.".$table;
 	}
 	
 	public function setError($message) {

@@ -372,7 +372,15 @@ class BugzillaQuery extends BSQLQuery {
         } else {
           $this->context->debug &&
             $this->context->debug("No results to render");
-          $output=$renderer->renderNoResultsHTML();
+          #
+          # If total is set then we still want to render the result
+          # because we want the zero totals to show
+          #
+          if ($this->get('total')) {
+            $output=$renderer->renderHTML($result);            
+          } else {
+            $output=$renderer->renderNoResultsHTML();
+          }
         }
       }
       $this->context->debug &&

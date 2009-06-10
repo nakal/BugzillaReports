@@ -2,6 +2,8 @@
 
 ==v1.1==
 
+* [#4]  - Add support for inline of totals, e.g. E,W,R = {{#bugzilla:columns=+estimated,+work,+remaining|total=estimated,work,remaining|hide=true|headers=hide|format=inline}}
+* [#4]  - Totals are reported as zero if no rows found (as opposed to blank, with no tickets found message)
 * [#8]  - Add a format to inline a bug report, e.g. {{#bugzilla:debug=1|id=661|status=*|format=inline}}
 * [#13] - Added support for created filters, e.g. {{#bugzilla:created=-1m|createdformat=date}}
 * [#13] - Added support for filters on status change, e.g. {{#bugzilla:assigned=2009-05-01:2009-05-31}}, 
@@ -15,6 +17,7 @@
 * BUG : [#11] - Support html in comments for last comment rendering, e.g. <table>
 * BUG : [#12] - "worked_hours" field will be multiplied by the number of keywords you have, e.g. {{#bugzilla:debug=1|columns=+work,+keywords|status=*|keywords=analytics|sort=id|total=work}}
 * BUG : [#22] - support wiki style equals in comments without affecting the page TOC
+* BUG : [#24] - support "-" in database names by enclosing database name in backticks in generated SQL
 
 ==v1.0 - 12th February 2009==
 
