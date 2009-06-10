@@ -585,13 +585,14 @@ class BugzillaQueryRenderer {
   # See issue [#22]
   #
   private function makeWikiSafe($s) {
+    $s=htmlspecialchars($s);
     if (strpos($s,"=") > -1) {
       $s=preg_replace('/^([=]+)[[:space:]]*$/m','<br/>$1<br/>',$s);
       # Bit cheating here because I don't make sure the closing equals match
       # the starting equals, but it's good enough
       $s=preg_replace('/^([=]+)([^=]*)=+[[:space:]]*$/m','$1$2$1.<br/>',$s);
     }
-    return htmlspecialchars($s);
+    return $s;
   }
 }
 ?>

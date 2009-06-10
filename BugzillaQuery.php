@@ -759,13 +759,13 @@ class BugzillaQuery extends BSQLQuery {
         " as reporterprofiles on bugs.reporter=reporterprofiles.userid";
     }
     if ($this->isRequired("lastcomment")) {
-      $sql.=" LEFT JOIN (SELECT MAX(longdescs.comment_id) as sub_comment_id, ".
+      $sql.=" LEFT JOIN (SELECT MAX(longdescs.bug_when) as sub_comment_when, ".
       "longdescs.bug_id as sub_bug_id FROM ".
       $this->connector->getTable("longdescs").
       " GROUP BY longdescs.bug_id) ".
       "descs ON bugs.bug_id=descs.sub_bug_id LEFT JOIN ".
       $this->connector->getTable("longdescs")." as longdescslastcomment ON ".
-      "longdescslastcomment.comment_id=sub_comment_id";
+      "longdescslastcomment.bug_when=sub_comment_when";
     }
     if ($this->isRequired("product")) {
       $sql.=" LEFT JOIN ".
