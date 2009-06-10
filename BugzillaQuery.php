@@ -48,15 +48,16 @@ class BugzillaQuery extends BSQLQuery {
     'group'         => 'sort',
     'groupformat'   => 'value',
     'grouporder'    => 'value',     # asc or desc
+    'hardware'      => 'field',
     'heading'       => 'free',
     'headers'       => 'value',
     'hide'          => 'value',
+    'id'            => 'field-id',
     'implicitcustom'  => 'boolean',   # true => allow custom fields not explicitly defined and not
                         # starting with the custom field prefix
     'instance'      => 'value',     # Alternative bugzilla instance as defined in 
                         # LocalSettings configuration
     'keywords'      => 'field-keywords',
-    'id'            => 'field-id',
     'link'          => 'columns',   # Define rules for linking headings and values 
                         # through to wiki pages
     'lastcomment'   => 'boolean',
@@ -67,6 +68,7 @@ class BugzillaQuery extends BSQLQuery {
     'modifiedformat'  => 'value',   # date or relativedate      
     'nameformat'    => 'value',     # real (default),tla or login
     'order'         => 'value',
+    'os'            => 'field',
     'priority'      => 'field',
     'product'       => 'field',
     'qa'            => 'field',
@@ -120,10 +122,12 @@ class BugzillaQuery extends BSQLQuery {
     'flagfrom'    => 'Flagged By',
     'flagname'    => 'Flag',
     'from'        => 'Requester',
+    'hardware'    => 'Hardware',
     'keyworddefs.name'    => 'Keywords',
     'id'          => 'ID',
     'milestone'   => 'Milestone',
     'modified'    => 'Modified',
+    'os'          => 'OS',
     'product'     => 'Product',
     'priority'    => 'P',
     'qa'          => 'QA',
@@ -162,12 +166,14 @@ class BugzillaQuery extends BSQLQuery {
     'closed'      => 'closedactivity.bug_when',
     'created'     => 'creation_ts',
     'estimated'   => 'estimated_time',
+    'hardware'    => 'rep_platform',
     'id'          => 'bugs.bug_id',
     'from'        => 'reporterprofiles.login_name',
     'keywords'    => 'keyworddefs.name',
     'milestone'   => 'target_milestone',
     'modified'    => 'lastdiffed',
     'product'     => 'products.name',
+    'os'          => 'op_sys',
     'qa'          => 'qaprofiles.login_name',
     'remaining'   => 'remaining_time',
     'reopened'    => 'reopenedactivity.bug_when',
@@ -181,8 +187,10 @@ class BugzillaQuery extends BSQLQuery {
   );
   # Bugzilla Query field names
   var $fieldBZQuery=array (
+    'hardware'    => 'rep_platform',
     'id'          => 'bug_id',  
     'milestone'   => 'target_milestone',
+    'os'          => 'op_sys',
     'qa'          => 'qa_contact',
     'severity'    => 'bug_severity',
     'status'      => 'bug_status',
@@ -560,6 +568,9 @@ class BugzillaQuery extends BSQLQuery {
         $sql.=", reporterprofiles.realname as raisedby";        
       }
     }
+    if ($this->isRequired("hardware")) {
+      $sql.=", rep_platform as hardware";
+    }
     if ($this->isRequired("keywords")) {
       $sql.=", keywords";
     }
@@ -571,6 +582,9 @@ class BugzillaQuery extends BSQLQuery {
     }
     if ($this->isRequired("modified")) {
       $sql.=", lastdiffed as modified";
+    }
+    if ($this->isRequired("os")) {
+      $sql.=", op_sys as os";
     }
     #
     # Priority always required because it used as class name for bug row
