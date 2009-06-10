@@ -579,7 +579,7 @@ class BugzillaQueryRenderer {
 	    # the starting equals, but it's good enough
   	  $s=preg_replace('/^([=]+)([^=]*)=+[[:space:]]*$/m','$1$2$1.<br/>',$s);
 	  }
-	  return $s;
+	  return htmlspecialchars($s);
 	}
 }
 ?>
