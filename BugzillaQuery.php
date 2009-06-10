@@ -190,6 +190,7 @@ class BugzillaQuery extends BSQLQuery {
   );
   # Bugzilla Query field names
   var $fieldBZQuery=array (
+    'blocks'      => 'blocked',
     'hardware'    => 'rep_platform',
     'id'          => 'bug_id',  
     'milestone'   => 'target_milestone',
