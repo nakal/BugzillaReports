@@ -23,6 +23,9 @@
 if ( !defined( 'MEDIAWIKI' ) and !defined('BUGZILLAREPORTS')  ) {
 	die('This file is a MediaWiki extension, it is not a valid entry point' );
 }
+if ( !method_exists('ParserOutput','addHeadItem') ) {
+	die('Sorry, but your MediaWiki version is too old for BugzillaReports, please upgrade to the latest MediaWiki version.' );  
+}
 $wgBugzillaReportsIncludes = dirname(__FILE__) . '/';
 
 #
