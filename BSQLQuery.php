@@ -570,7 +570,7 @@ abstract class BSQLQuery {
 		$tla;
 		if (sizeof($names) ==1) {
 			if (strlen($value) > 3) {
-				$tla=substring($value,0,3);				
+				$tla=substr($value,0,3);				
 			} else {
 				$tla=$value;
 			}
