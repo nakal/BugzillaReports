@@ -23,6 +23,7 @@ class BugzillaQuery extends BSQLQuery {
   var $supportedParameters=array (
     'alias'         => 'field-id',
     'assigned'      => 'field-date',
+    'attachments'   => 'field-number',
     'bar'           => 'column',
     'bzurl'         => 'value',     # Show the url to the BZ query
     'blocks'        => 'field-depends',
@@ -109,6 +110,7 @@ class BugzillaQuery extends BSQLQuery {
   public $columnName=array (
     'alias'       => 'Alias',
     'assigned'    => 'Assigned',
+    'attachments' => '@',
     'blocks'      => 'Blocks',
     'closed'      => 'Closed',
     'component'   => 'Component',
@@ -161,6 +163,7 @@ class BugzillaQuery extends BSQLQuery {
     );
   var $fieldSQLColumn=array (
     'assigned'    => 'assignedactivity.bug_when',
+    'attachments' => 'attachments.nattachments',
     'cc'          => 'ccprofiles.login_name',
     'component'   => 'components.name',
     'closed'      => 'closedactivity.bug_when',
@@ -183,7 +186,7 @@ class BugzillaQuery extends BSQLQuery {
     'to'          => 'profiles.login_name',
     'url'         => 'bug_file_loc',
     'verified'    => 'verifiedactivity.bug_when',
-    'work'        => 'work_time', 
+    'work'        => 'work_time'
   );
   # Bugzilla Query field names
   var $fieldBZQuery=array (
@@ -528,6 +531,9 @@ class BugzillaQuery extends BSQLQuery {
     if ($this->isRequired("assigned")) {
       $sql.=", assignedactivity.bug_when as assigned";
     }    
+    if ($this->isRequired("attachments")) {
+      $sql.=", attachments.nattachments as attachments ";
+    }    
     if ($this->isRequired("blocks")) {
       $sql.=", blockstab.blocks as blocks, blockstab.blocksalias as blocksalias, blockstab.blockssummary as blockssummary,blockstab.blocksstatus as blocksstatus, blockstab.blockspriority as blockspriority, blockstab.realname as blocksto";
     }
@@ -667,6 +673,12 @@ class BugzillaQuery extends BSQLQuery {
         $this->connector->getTable("bugs_activity").
         " where fieldid=".$this->fieldIds["bug_status"].
         " and added='ASSIGNED' GROUP BY bug_id) as assignedactivity on bugs.bug_id=assignedactivity.bug_id";
+    }
+    if ($this->isRequired("attachments")) {
+      $sql.=" LEFT JOIN (SELECT bug_id as attachmentbugid, COUNT(attach_id) as nattachments from ".
+        $this->connector->getTable("attachments").
+        " group by attachmentbugid) as ".
+        "attachments on attachments.attachmentbugid=bugs.bug_id";                    
     }
     if ($this->isRequired("blocks")) {
       $sql.=" LEFT JOIN (SELECT dependson,blocked as blocks, blockedbugs.alias as blocksalias, blockedbugs.short_desc as blockssummary, blockedbugs.bug_status as blocksstatus, blockedbugs.priority as blockspriority,login_name,realname from ".

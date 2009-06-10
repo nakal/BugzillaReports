@@ -9,6 +9,7 @@
 * [#13] - Added support for filters on status change, e.g. {{#bugzilla:assigned=2009-05-01:2009-05-31}}, 
   {{#bugzilla:resolved=2009-05-01:2009-05-31}}, {{#bugzilla:verified=2009-05-01:2009-05-31}},
   {{#bugzilla:closed=2009-05-01:2009-05-31}}, {{#bugzilla:reopened=2009-05-01:2009-05-31}}
+* [#18] - Add support for attachments, e.g. {{#bugzilla:sort=attachments|order=desc|status=*}}
 * [#21] - Added support for reports on hardware and os, e.g.   {{#bugzilla:columns=+hardware,os}}
   {{#bugzilla:columns=+hardware,os|os=Linux}}, {{#bugzilla:columns=+hardware,os|hardware=Macintosh}}
 * BUG : [#3]  - Task repeated in report for tasks with multiple keywords when keywords displayed in report
