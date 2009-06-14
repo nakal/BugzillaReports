@@ -105,6 +105,7 @@ class BugzillaQuery extends BSQLQuery {
     'order'           => 'asc',
     'status'          => '!CLOSED',
     'sort'            => 'priority,status',
+    'sortable'        => '1',
     'zeroasblank'     => 'true'
   );
   public $columnName=array (
