@@ -782,14 +782,14 @@ class BugzillaQuery extends BSQLQuery {
       $sql.=" LEFT JOIN ".
         " (SELECT bug_id, MAX(bug_when) as bug_when from ".
         $this->connector->getTable("bugs_activity").
-        " where fieldid=".$this->fieldIds["bug_status"].
+        " where fieldid=".BugzillaQuery::$fieldIds["bug_status"].
         " and added='REOPENED' GROUP BY bug_id) as reopenedactivity on bugs.bug_id=reopenedactivity.bug_id";
     }
     if ($this->isRequired("resolved")) {
       $sql.=" LEFT JOIN ".
         " (SELECT bug_id, MAX(bug_when) as bug_when from ".
         $this->connector->getTable("bugs_activity").
-        " where fieldid=".$this->fieldIds["bug_status"].
+        " where fieldid=".BugzillaQuery::$fieldIds["bug_status"].
         " and added='RESOLVED' GROUP BY bug_id) as resolvedactivity on bugs.bug_id=resolvedactivity.bug_id";
     }
     if ($this->isRequired("to")) {
@@ -801,7 +801,7 @@ class BugzillaQuery extends BSQLQuery {
       $sql.=" LEFT JOIN ".
         " (SELECT bug_id, MAX(bug_when) as bug_when from ".
         $this->connector->getTable("bugs_activity").
-        " where fieldid=".$this->fieldIds["bug_status"].
+        " where fieldid=".BugzillaQuery::$fieldIds["bug_status"].
         " and added='VERIFIED' GROUP BY bug_id) as verifiedactivity on bugs.bug_id=verifiedactivity.bug_id";
     }
     if ($this->isRequired("work")) {
@@ -1068,13 +1068,12 @@ class BugzillaQuery extends BSQLQuery {
     #
     # Initialise the fieldIds
     #
-    if (sizeof($this->fieldIds) <= 1) {
-      $this->fieldIds;
+    if (sizeof(BugzillaQuery::$fieldIds) <= 1) {
       $result = $this->connector->execute("select id,name from ".$this->connector->getTable("fielddefs"),$db);
       $this->context->debug &&
         $this->context->debug("Registering field ids : ".$this->connector->getRowCount($result));              
       while ($line = $this->connector->fetch($result)) {
-        $this->fieldIds[$line["name"]]=$line["id"];
+        BugzillaQuery::$fieldIds[$line["name"]]=$line["id"];
         $this->context->debug &&
           $this->context->debug("Registering field id".$line["name"]." -> ".$line["id"]);              
       }
@@ -1082,7 +1081,7 @@ class BugzillaQuery extends BSQLQuery {
       $this->context->debug &&
         $this->context->debug("Field ids already initialised : ".sizeof($this->fieldIds));                    
     }    
-    return $this->fieldIds;
+    return BugzillaQuery::$fieldIds;
   }
   
   

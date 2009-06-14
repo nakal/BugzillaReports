@@ -443,13 +443,40 @@ class BugzillaQueryRenderer {
       }
     } 
     if (trim($details)) {
-      $this->output.="<tr class=\"bz_details\"><td title=\"$title\" class=\"bz_details\" colspan=\"".
-      $this->numberOfMainRowColumns."\">";
-      $this->output.=$prepend.$details;
-      if ($extra) {
-        $this->output.="<span class=\"bz_extra\"> - $extra</span>";
+      #
+      # Use the trick in http://meta.wikimedia.org/wiki/Help:Sorting to allow the table
+      # to be sorted
+      #
+      $this->output.="<tr class=\"bz_details\">";
+      $i=0;
+      foreach ($this->query->getColumns() as $column) {
+        $dbColumn=$this->query->mapField($column);        
+        if (!$this->query->get('detailsrow') 
+            or !array_key_exists($dbColumn,
+              $detailsRowColumns)) {
+          $title=$this->query->getValueTitle($line,$dbColumn);
+          $value=$this->query->
+            format($this->query->getDBValue($line,$dbColumn),$column,$title);
+          #
+          # Putting ZZZ after the value ensures that it sorts after the row this is associated with
+          $this->output.="<td><span style=\"display:none\">$value</span>";
+          if ($i==0) {
+            #
+            # Don't close for the last column since we're going to append the details 
+            #
+            $estimatedWidth=30 + $this->numberOfMainRowColumns * 5;
+            $this->output.="<div title=\"$title\" class=\"bz_details\" style=\"margin-left:2em;margin-right:-".$estimatedWidth."em;overflow:auto\">";
+            $this->output.=$prepend.$details;
+            if ($extra) {
+              $this->output.="<span class=\"bz_extra\"> - $extra</span>";
+            }
+            $this->output.="</div>";
+          }
+          $this->output.="</td>";
+          $i++;
+        }
       }
-      $this->ouput.="</td></tr>";
+      $this->output.="</tr>";
     }   
   }
   
