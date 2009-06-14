@@ -2,7 +2,7 @@
 |name=BugzillaReports
 |author=[[User:Ian Homer|Ian Homer]]
 |type=parser function
-|version=1.1-b1
+|version=1.1-beta1
 |update=June 14th, 2009
 |status=stable
 |mediawiki=1.13
