@@ -346,6 +346,12 @@ class BugzillaQuery extends BSQLQuery {
         $this->formats["keywords"]="link~keyword";
       }
     }
+    #
+    # Sorting does not work when grouping is enabled so we disable it
+    #
+    if ($this->get("group")) {
+      $this->set("sortable","0");
+    }
     
     $db = $this->connector->connect();
     
