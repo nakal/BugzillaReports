@@ -1,6 +1,6 @@
 =Release Notes=
 
-==v1.1==
+==v1.1 - 7th July 2009==
 
 * [#1]  - Add safety check that you're not on a really old release of MediaWiki
 * [#4]  - Add support for inline of totals, e.g. E,W,R = {{#bugzilla:columns=+estimated,+work,+remaining|total=estimated,work,remaining|hide=true|headers=hide|format=inline}}
