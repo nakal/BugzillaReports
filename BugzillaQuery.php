@@ -679,7 +679,7 @@ class BugzillaQuery extends BSQLQuery {
       $sql.=" LEFT JOIN ".
         " (SELECT bug_id, MAX(bug_when) as bug_when from ".
         $this->connector->getTable("bugs_activity").
-        " where fieldid=".$this->fieldIds["bug_status"].
+        " where fieldid=".BugzillaQuery::$fieldIds["bug_status"].
         " and added='ASSIGNED' GROUP BY bug_id) as assignedactivity on bugs.bug_id=assignedactivity.bug_id";
     }
     if ($this->isRequired("attachments")) {
@@ -722,7 +722,7 @@ class BugzillaQuery extends BSQLQuery {
       $sql.=" LEFT JOIN ".
         " (SELECT bug_id, MAX(bug_when) as bug_when from ".
         $this->connector->getTable("bugs_activity").
-        " where fieldid=".$this->fieldIds["bug_status"].
+        " where fieldid=".BugzillaQuery::$fieldIds["bug_status"].
         " and added='CLOSED' GROUP BY bug_id) as closedactivity on bugs.bug_id=closedactivity.bug_id";
     }
     if ($this->isRequired("depends")) {

@@ -1,5 +1,9 @@
 =Release Notes=
 
+==v1.2==
+
+* BUG : [#33] - Assigned and closed fields not working, throwing SQL exception
+
 ==v1.1 - 7th July 2009==
 
 * [#1]  - Add safety check that you're not on a really old release of MediaWiki
