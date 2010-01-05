@@ -1085,7 +1085,7 @@ class BugzillaQuery extends BSQLQuery {
       }
     } else {
       $this->context->debug &&
-        $this->context->debug("Field ids already initialised : ".sizeof($this->fieldIds));                    
+        $this->context->debug("Field ids already initialised : ".sizeof(BugzillaQuery::$fieldIds));                    
     }    
     return BugzillaQuery::$fieldIds;
   }

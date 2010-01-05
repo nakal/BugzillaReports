@@ -65,7 +65,7 @@ if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
 $wgExtensionMessagesFiles['BugzillaReports'] = $wgBugzillaReportsIncludes.
   '/BugzillaReports.i18n.php';
 
-$wgHooks['LanguageGetMagic'][]       = 'efBugzillaReportsMagic';
+$wgHooks['LanguageGetMagic'][] = 'efBugzillaReportsMagic';
 
 $bzScriptPath = $wgScriptPath . '/extensions/BugzillaReports';
 
@@ -84,7 +84,7 @@ function efBugzillaReportsSetup() {
 /**
  * Register the magic word
  */
-function efBugzillaReportsMagic( &$magicWords, $langCode ) {
+function efBugzillaReportsMagic( &$magicWords, $langCode = "en" ) {
   $magicWords['bugzilla'] = array( 0, 'bugzilla' );
   return true;
 }
