@@ -266,10 +266,12 @@ class BugzillaQuery extends BSQLQuery {
   private $bzFieldCount=0;          # Field counter for BZ URL
   private $customPrefixLength;        # Cached length of custom prefix length
 
-  public $bzURL="";     # Bugzilla URL to run query
+  public $bzURL="";         # Bugzilla URL to run query
   public $explitlyOneValue; # Set if report is explictly one value
 
-  public static $fieldIds=array();
+  public static $fieldIds=array();    
+  public static $buglistServerRelativeUri="/buglist.cgi?";
+
     
   #
   # Parse in a context object which implements the following
@@ -307,7 +309,7 @@ class BugzillaQuery extends BSQLQuery {
   # Render the results
   #
   function render() {   
-    $this->bzURL=$this->context->bzserver."/buglist.cgi?";
+    $this->bzURL=$this->context->bzserver . BugzillaQuery::$buglistServerRelativeUri;
 
     #
     # Register supported custom fields

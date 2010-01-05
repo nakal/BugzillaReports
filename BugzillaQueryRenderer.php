@@ -112,9 +112,12 @@ class BugzillaQueryRenderer {
           $this->context->debug("Name for column $column is $name");  
         if (($column=="summary") && ($nRows > 1)) {
           $name.=" ($nRows tasks)";
-          if ($this->context->bzserver && $this->query->get('bzurl')=="show") {
+          if ($this->context->bzserver && $this->query->get('bzurl')=="show"
+              && substr($this->query->bzURL,strlen($this->query->bzURL) -
+              strlen(BugzillaQuery::$buglistServerRelativeUri) ) !=
+              BugzillaQuery::$buglistServerRelativeUri) {
             if ($this->context->rawHTML) {
-              $name.=" <a href=\"".$this->bzURL."\">&rArr;</a>";
+              $name.=" <a href=\"".$this->query->bzURL."\">&rArr;</a>";
             } else {
               $name.=" [".$this->query->bzURL." &rArr;]";
             }
