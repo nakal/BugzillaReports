@@ -58,7 +58,11 @@ class BugzillaQueryRenderer {
       if ($this->query->get('bar')) {
         $this->output.=" bz_bar";
       }
-      $this->output.="\">";
+      $this->output.="\"";
+      if ($this->query->get('style')) {
+        $this->output.=" style=\"".$this->query->get('style')."\"";
+      }
+      $this->output.=">";
     } else {
       
     }
