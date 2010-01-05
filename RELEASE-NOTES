@@ -2,7 +2,10 @@
 
 ==v1.2==
 
+* BUG : [#26] - Bugzilla search link not provided if no parameters are applicable to give a search
+* BUG : [#27] - Fixed bug that led to some columns that were marked for removal weren't removed
 * BUG : [#33] - Assigned and closed fields not working, throwing SQL exception
+* BUG : [#49] - Update how parser functions are registered to latest MediaWiki techniques
 
 ==v1.1 - 7th July 2009==
 
