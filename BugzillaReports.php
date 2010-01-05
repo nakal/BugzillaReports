@@ -21,10 +21,10 @@
  */
 
 if ( !defined( 'MEDIAWIKI' ) and !defined('BUGZILLAREPORTS')  ) {
-	die('This file is a MediaWiki extension, it is not a valid entry point' );
+  die('This file is a MediaWiki extension, it is not a valid entry point' );
 }
 if ( !method_exists('ParserOutput','addHeadItem') ) {
-	die('Sorry, but your MediaWiki version is too old for BugzillaReports, please upgrade to the latest MediaWiki version.' );  
+  die('Sorry, but your MediaWiki version is too old for BugzillaReports, please upgrade to the latest MediaWiki version.' );  
 }
 $wgBugzillaReportsIncludes = dirname(__FILE__) . '/';
 
@@ -32,31 +32,38 @@ $wgBugzillaReportsIncludes = dirname(__FILE__) . '/';
 # Set up autoloading
 #
 $wgAutoloadClasses['BMWExtension']=
-	$wgBugzillaReportsIncludes."BMWExtension.php";
+  $wgBugzillaReportsIncludes."BMWExtension.php";
 $wgAutoloadClasses['BSQLQuery']=
-	$wgBugzillaReportsIncludes."BSQLQuery.php";
+  $wgBugzillaReportsIncludes."BSQLQuery.php";
 $wgAutoloadClasses['BugzillaQuery']=
-	$wgBugzillaReportsIncludes."BugzillaQuery.php";
+  $wgBugzillaReportsIncludes."BugzillaQuery.php";
 $wgAutoloadClasses['BMysqlConnector']=
-	$wgBugzillaReportsIncludes."BMysqlConnector.php";
+  $wgBugzillaReportsIncludes."BMysqlConnector.php";
 $wgAutoloadClasses['BPGConnector']=
-	$wgBugzillaReportsIncludes."BPGConnector.php";
+  $wgBugzillaReportsIncludes."BPGConnector.php";
 $wgAutoloadClasses['BugzillaReport']=
-	$wgBugzillaReportsIncludes."BugzillaReport.php";
+  $wgBugzillaReportsIncludes."BugzillaReport.php";
 $wgAutoloadClasses['BugzillaQueryRenderer']=
-	$wgBugzillaReportsIncludes."BugzillaQueryRenderer.php";
+  $wgBugzillaReportsIncludes."BugzillaQueryRenderer.php";
 
 $wgExtensionCredits['parserhook'][] = array(
-        'name' => 'BugzillaReports',
-        'version' => '1.1',
-        'url' => 'http://www.mediawiki.org/wiki/Extension:Bugzilla_Reports',
-        'author' => '[http://bemoko.com/bemoko/i/page/ian-homer Ian Homer]',
-        'description' => 'Provide bugzilla reports'
+  'name' => 'BugzillaReports',
+  'version' => '1.1',
+  'url' => 'http://www.mediawiki.org/wiki/Extension:Bugzilla_Reports',
+  'author' => '[http://bemoko.com/bemoko/i/page/ian-homer Ian Homer]',
+  'description' => 'Provide bugzilla reports'
 );
 
-$wgExtensionFunctions[] = 'efBugzillaReportsSetup';
+
+//Avoid unstubbing $wgParser too early on modern (1.12+) MW versions, as per r35980
+if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {  
+  $wgHooks['ParserFirstCallInit'][] = 'efBugzillaReportsSetup';
+} else {
+  $wgExtensionFunctions[] = 'efBugzillaReportsSetup';
+}
+
 $wgExtensionMessagesFiles['BugzillaReports'] = $wgBugzillaReportsIncludes.
-	'/BugzillaReports.i18n.php';
+  '/BugzillaReports.i18n.php';
 
 $wgHooks['LanguageGetMagic'][]       = 'efBugzillaReportsMagic';
 
@@ -66,25 +73,26 @@ $bzScriptPath = $wgScriptPath . '/extensions/BugzillaReports';
  * Register the function hook
  */
 function efBugzillaReportsSetup() {
-	global $wgParser;
-	$wgParser->setFunctionHook( 'bugzilla', 'efBugzillaReportsRender' );
+  global $wgParser;  
+  $wgParser->setFunctionHook( 'bugzilla', 'efBugzillaReportsRender' );
+  return true;
 }
  
 /**
  * Register the magic word
  */
 function efBugzillaReportsMagic( &$magicWords, $langCode ) {
-	$magicWords['bugzilla'] = array( 0, 'bugzilla' );
-	return true;
+  $magicWords['bugzilla'] = array( 0, 'bugzilla' );
+  return true;
 }
  
 /**
  * Call to render the bugzilla report
  */
 function efBugzillaReportsRender( &$parser) {
-	$bugzillaReport = new BugzillaReport( $parser );
-	$args = func_get_args();
-	array_shift( $args );
-	return $bugzillaReport->render($args);
+  $bugzillaReport = new BugzillaReport( $parser );
+  $args = func_get_args();
+  array_shift( $args );
+  return $bugzillaReport->render($args);
 }
 ?>
