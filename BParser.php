@@ -21,20 +21,18 @@
  */
 
 class BOutput {
-	public $head="";
-	
-	public function addHeadItem($markup) {
-		$this->head.=$markup;
-	}
+  public $head="";
+  
+  public function addHeadItem($markup) {
+    $this->head.=$markup;
+  }
 }
 
 class BParser {
-	public $mOutput;
-	
-	function BParser() {
-		$this->mOutput=new BOutput();
-	}		
+  public $mOutput;
+  
+  function BParser() {
+    $this->mOutput=new BOutput();
+  }   
 }
-
-
 ?>
