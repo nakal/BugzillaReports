@@ -73,8 +73,11 @@ $bzScriptPath = $wgScriptPath . '/extensions/BugzillaReports';
  * Register the function hook
  */
 function efBugzillaReportsSetup() {
-  global $wgParser;  
-  $wgParser->setFunctionHook( 'bugzilla', 'efBugzillaReportsRender' );
+  global $wgParser;
+  $efBugzillaReportsHookStub = new BugzillaReportsHookStub;
+  
+  $wgParser->setFunctionHook( 'bugzilla',
+    array(&$efBugzillaReportsHookStub,'efBugzillaReportsRender') );
   return true;
 }
  
@@ -86,13 +89,15 @@ function efBugzillaReportsMagic( &$magicWords, $langCode ) {
   return true;
 }
  
-/**
- * Call to render the bugzilla report
- */
-function efBugzillaReportsRender( &$parser) {
-  $bugzillaReport = new BugzillaReport( $parser );
-  $args = func_get_args();
-  array_shift( $args );
-  return $bugzillaReport->render($args);
+class BugzillaReportsHookStub {  
+  /**
+   * Call to render the bugzilla report
+   */
+  function efBugzillaReportsRender( &$parser) {
+    $bugzillaReport = new BugzillaReport( $parser );
+    $args = func_get_args();
+    array_shift( $args );
+    return $bugzillaReport->render($args);
+  }
 }
 ?>
