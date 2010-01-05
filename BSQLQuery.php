@@ -976,8 +976,8 @@ abstract class BSQLQuery {
           $newColumn=$this->getColumnNameAndRegisterTitle($newColumn);  
           $this->context->debug && 
             $this->context->
-              debug("Adjusting columns (single string): ".
-              $operation.":".$newColumn);
+              debug("Adjusting columns (single string):".
+              $operation.":".$newColumn.":");
           /**
            * Add or remove column
            */
@@ -999,21 +999,21 @@ abstract class BSQLQuery {
           } else if ($operation == "-") {
             $found=-1;
             $i=0;
-            foreach ($baseColumns as $search) {
+            foreach ($baseColumns as $i => $search) {
               if ($search==$newColumn) {
                 $found=$i;
                 break;
               }
-              $i++;
             }
             if ($found > -1) {
               $this->context->debug &&
-                $this->context->debug("Removing column [$newColumn,$found]");
+                $this->context->debug("Removing column [$newColumn,$found] ; "
+                  .$baseColumns[$found]);
               unset($baseColumns[$found]);
-              if (array_key_exists($newColumn,
-                $this->implicityAddedColumns)) {
-                unset($this
-                  ->implicityAddedColumns[$newColumn]);
+              if (array_key_exists($newColumn,$this->implicityAddedColumns)) {
+                $this->context->debug &&
+                  $this->context->debug("Removing implicit column $newColumn ; ");                
+                unset($this->implicityAddedColumns[$newColumn]);
               }
             } else {
               $this->context
@@ -1099,9 +1099,11 @@ abstract class BSQLQuery {
       $columns,
       array_keys($this->implicityAddedColumns)
     ));
-    $this->context->debug && 
-      $this->context->debug("Implictly adding column "
-        .join(",",array_keys($this->implicityAddedColumns)));
+    if (sizeof($this->implicityAddedColumns) > 0) {
+      $this->context->debug && 
+        $this->context->debug("Implictly adding column "
+          .join(",",array_keys($this->implicityAddedColumns)));
+    }
     foreach ($this->implicityRemovedColumns as $column) {
       if (array_key_exists($column,$newColumns)) {
         $this->context->debug && 
