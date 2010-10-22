@@ -25,6 +25,7 @@ class BugzillaQuery extends BSQLQuery {
     'assigned'      => 'field-date',
     'attachments'   => 'field-number',
     'bar'           => 'column',
+    'bzalternateconfig' => 'free', 
     'bzurl'         => 'value',     # Show the url to the BZ query
     'blocks'        => 'field-depends',
     'cc'            => 'field',

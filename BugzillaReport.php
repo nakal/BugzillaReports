@@ -106,13 +106,40 @@ EOH;
       $this->instanceNameSpace=$this->query->get("instance");
     }
     
-    $this->dbuser=$this->getProperty("user",$wgDBuser);
-    $this->bzserver=$this->getProperty("bzserver", null);
+    #
+    # Allow the user to specify alternate DB connection info by name
+    # in his query.
+    #
+    
+    if ($this->query->get("bzalternateconfig") != null) {
+    #
+    # The user has asked for an alternate BZ install to be queried.
+    #
+    $alternateConfigName = $this->query->get("bzalternateconfig");
+    $bzAlternateConfigs = $this->getProperty("bzAlternateConfigs");
+    if (is_array($bzAlternateConfigs["$alternateConfigName"])) {
+      #
+      # We appear to have an array...set values.
+      #
+      $this->dbuser=$bzAlternateConfigs["$alternateConfigName"]["user"];
+      $this->bzserver=$bzAlternateConfigs["$alternateConfigName"]["bzserver"];
+      $this->database=$bzAlternateConfigs["$alternateConfigName"]["database"];
+      $this->host=$bzAlternateConfigs["$alternateConfigName"]["host"];
+      $this->password=$bzAlternateConfigs["$alternateConfigName"]["password"];
+      }
+    } else {
+      #
+      # Use the defaults from LocalConfig
+      #
+      $this->dbuser=$this->getProperty("user",$wgDBuser);
+      $this->bzserver=$this->getProperty("bzserver", null);
+      $this->database=$this->getProperty("database");
+      $this->host=$this->getProperty("host");
+      $this->password=$this->getProperty("password");
+    }
+    
     $this->interwiki=$this->getProperty("interwiki", null);
     $this->dbencoding=$this->getProperty("dbencoding", "utf8");
-    $this->database=$this->getProperty("database");
-    $this->host=$this->getProperty("host");
-    $this->password=$this->getProperty("password");
     $this->maxrowsFromConfig=
       $this->getProperty("maxrows",$this->maxrowsFromConfigDefault);
     $this->maxrowsForBarChartFromConfig=
