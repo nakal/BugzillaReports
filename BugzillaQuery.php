@@ -598,7 +598,7 @@ class BugzillaQuery extends BSQLQuery {
       $sql.=", rep_platform as hardware";
     }
     if ($this->isRequired("keywords")) {
-      $sql.=", keywords";
+      $sql.=", (SELECT group_concat(keyworddefs.name) FROM bugs.keyworddefs WHERE keyworddefs.id in (SELECT keywords.keywordid FROM bugs.keywords WHERE keywords.bug_id=bugs.bug_id )) as keywords";
     }
     if ($this->isRequired("milestone")) {
       $sql.=", target_milestone as milestone";
