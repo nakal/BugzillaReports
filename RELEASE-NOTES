@@ -1,5 +1,10 @@
 =Release Notes=
 
+==v1.3 - 4th August 2013==
+
+* Minor fix for compatibility with MediaWiki 1.21
+* Fix for compatibility with Bugzilla 4.x. Will no longer work with 3.x.
+
 ==v1.2==
 
 * BUG : [#26] - Bugzilla search link not provided if no parameters are applicable to give a search
