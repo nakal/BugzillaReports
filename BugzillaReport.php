@@ -208,7 +208,6 @@ EOH;
     public function getErrorMessage($key) {
     $args = func_get_args();
     array_shift( $args ); 
-    wfLoadExtensionMessages( 'BugzillaReports' );
     return '<strong class="error">BugzillaReports : '. 
       wfMsgForContent($key,$args).'</strong>';  
   }
