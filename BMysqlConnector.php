@@ -36,42 +36,42 @@ class BMysqlConnector {
   }
 
   public function connect() {
-    $db=mysql_connect($this->context->host, 
+    $db = new mysqli($this->context->host, 
       $this->context->dbuser, $this->context->password);
       
     /*
      * Set character encoding
      */ 
     
-    mysql_query("SET NAMES '".$this->context->dbencoding."';", $db);
-    mysql_query("SET CHARACTER SET '".$this->context->dbencoding."';", $db);
+    $db->query("SET NAMES '".$this->context->dbencoding."';");
+    $db->query("SET CHARACTER SET '".$this->context->dbencoding."';");
           
-    if (!$db) {
+    if ($db->connect_errno) {
       $this->setError($this->context
         ->getErrorMessage('bReport_noconnection',
           $this->context->dbuser,
-          $this->context->host,mysql_error())); 
+          $this->context->host, $db->connect_error)); 
       return FALSE;
     }     
     
     /*
      * Test the connection early - note that we can't switch to the db
-     * with mysql_select_db since if this is a shared database connection
+     * with select_db since if this is a shared database connection
      * with mediawiki then we will have changed the db for the mediawiki
      * access.
      */
     $sql="select count(id) from `".$this->context->database."`".
       ".priority;";
-    $result=mysql_query($sql,$db);
+    $result=$db->query($sql);
     if (!$result) {
       $this->setError($this->context->getErrorMessage('bReport_nodb',
         "Can't find test table 'priority' in database ".
         "`".$this->context->database."` using ".$sql.
         " - this probably means your username and password set in the variable wgBugzillaReports are not correct."));
       $db=null;     
-    } else if (mysql_error($db)) {
+    } else if ($db->error) {
       $this->setError($this->context->getErrorMessage('bReport_nodb'),
-        mysql_error($db));
+        $db->error);
       $db=null;
     } else if ($this->getRowCount($result) != 1) {
       $this->setError($this->context->getErrorMessage('bReport_nodb',
@@ -84,24 +84,24 @@ class BMysqlConnector {
   }
   
   public function execute($sql,$db) {
-    return mysql_query($sql, $db);    
+    return $db->query($sql);
   }
   
   public function getRowCount($result) {
-    return mysql_num_rows($result);
+    return $result->num_rows;
   }
   
   public function fetch($result) {
-    return mysql_fetch_array($result, MYSQL_ASSOC);
+    return $result->fetch_assoc();
   }
   public function free($result) {
-    mysql_free_result($result);
+    $result->close();
   }
   
   public function close($db) {    
     /* 
      * In PHP you should rely on script termination to close mysql
-     * and not explicitly call mysql_close($db) - see
+     * and not explicitly call close() - see
      * http://uk.php.net/manual/en/function.mysql-close.php
      * This is because the implementation may reuse connections.  This 
      * does happen if the connection details for the Bugzila database are
@@ -124,7 +124,7 @@ class BMysqlConnector {
   }
   
   public function getDbError($db) {
-    return mysql_error($db);
+    return $db->error;
   }
 
 }
