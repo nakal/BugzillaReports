@@ -538,7 +538,7 @@ class BugzillaQuery extends BSQLQuery {
     }     
     $sql.="SELECT DISTINCT bugs.bug_id as id";
     if ($this->isRequired("alias")) {
-      $sql.=", alias";
+      $sql.=", aliases.alias as alias";
     }
     if ($this->isRequired("assigned")) {
       $sql.=", assignedactivity.bug_when as assigned";
@@ -693,16 +693,20 @@ class BugzillaQuery extends BSQLQuery {
         "attachments on attachments.attachmentbugid=bugs.bug_id";                    
     }
     if ($this->isRequired("blocks")) {
-      $sql.=" LEFT JOIN (SELECT dependson,blocked as blocks, blockedbugs.alias as blocksalias, blockedbugs.short_desc as blockssummary, blockedbugs.bug_status as blocksstatus, blockedbugs.priority as blockspriority,login_name,realname from ".
+      $sql.=" LEFT JOIN (SELECT dependson,blocked as blocks, blockedalias.alias as blocksalias, blockedbugs.short_desc as blockssummary, blockedbugs.bug_status as blocksstatus, blockedbugs.priority as blockspriority,login_name,realname from ".
         $this->connector->getTable("dependencies")
         ." INNER JOIN ".
         $this->connector->getTable("bugs").
-        " as blockedbugs ON dependencies.blocked=blockedbugs.bug_id"
-        ." INNER JOIN ".
+        " as blockedbugs ON dependencies.blocked=blockedbugs.bug_id".
+	" LEFT JOIN ".
+	$this->connector->getTable("bugs_aliases").
+	" as blockedalias ON blockedalias.bug_id=blockedbugs.bug_id".
+        " INNER JOIN ".
         $this->connector->getTable("profiles").
         " ON blockedbugs.assigned_to=profiles.userid".
         " where 1=1 ".$this->getWhereClause($this->get('dependsstatus'),"blockedbugs.bug_status").
-        " order by blockedbugs.priority) as blockstab ON blockstab.dependson=bugs.bug_id";
+	" order by blockedbugs.priority".
+	") as blockstab ON blockstab.dependson=bugs.bug_id";
     }
     if ($this->isRequired("component")) {
       $sql.=" LEFT JOIN ".
@@ -730,16 +734,20 @@ class BugzillaQuery extends BSQLQuery {
         " and added='CLOSED' GROUP BY bug_id) as closedactivity on bugs.bug_id=closedactivity.bug_id";
     }
     if ($this->isRequired("depends")) {
-      $sql.=" LEFT JOIN (SELECT blocked,dependson as depends, dependsonbugs.alias as dependsalias, dependsonbugs.short_desc as dependssummary, dependsonbugs.bug_status as dependsstatus, dependsonbugs.priority as dependspriority, login_name, realname from ".
+      $sql.=" LEFT JOIN (SELECT blocked,dependson as depends, dependsonalias.alias as dependsalias, dependsonbugs.short_desc as dependssummary, dependsonbugs.bug_status as dependsstatus, dependsonbugs.priority as dependspriority, login_name, realname from ".
         $this->connector->getTable("dependencies")
         ." INNER JOIN ".
         $this->connector->getTable("bugs").
         " as dependsonbugs ON dependencies.dependson=dependsonbugs.bug_id".
+	" LEFT JOIN ".
+	$this->connector->getTable("bugs_aliases").
+	" as dependsonalias ON dependsonalias.bug_id=dependsonbugs.bug_id".
         " INNER JOIN ".
         $this->connector->getTable("profiles").
         " ON dependsonbugs.assigned_to=profiles.userid".
         " where 1=1 ".$this->getWhereClause($this->get('dependsstatus'),"dependsonbugs.bug_status").
-        " order by dependsonbugs.priority) as dependstab ON dependstab.blocked=bugs.bug_id";
+	" order by dependsonbugs.priority".
+	") as dependstab ON dependstab.blocked=bugs.bug_id";
     }
     if ($this->isRequired("flag")) {
       $sql.=" INNER JOIN (SELECT bug_id,creation_date as flagdate,flagsto.login_name as flag_login,flagsto.realname as flag_realname,flagsfrom.login_name as flagfrom_login, flagsfrom.realname as flagfrom_realname,flagtypes.name as flagname from ".
@@ -813,6 +821,11 @@ class BugzillaQuery extends BSQLQuery {
         $this->connector->getTable("bugs_activity").
         " where fieldid=".BugzillaQuery::$fieldIds["bug_status"].
         " and added='VERIFIED' GROUP BY bug_id) as verifiedactivity on bugs.bug_id=verifiedactivity.bug_id";
+    }
+    if ($this->isRequired("alias")) {
+	    $sql.=" LEFT JOIN ".
+		    $this->connector->getTable("bugs_aliases").
+		    " as aliases ON aliases.bug_id=bugs.bug_id";
     }
     if ($this->isRequired("work")) {
       $sql.=", ".$this->connector->getTable("longdescs")." as longdescswork";
