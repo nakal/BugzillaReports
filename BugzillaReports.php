@@ -47,11 +47,12 @@ $wgAutoloadClasses['BugzillaQueryRenderer']=
   $wgBugzillaReportsIncludes."BugzillaQueryRenderer.php";
 
 $wgExtensionCredits['parserhook'][] = array(
-  'name' => 'BugzillaReports',
-  'version' => '1.1',
-  'url' => 'http://www.mediawiki.org/wiki/Extension:Bugzilla_Reports',
-  'author' => '[http://bemoko.com/bemoko/i/page/ian-homer Ian Homer]',
-  'description' => 'Provide bugzilla reports'
+	'path' => __FILE__,
+	'name' => 'BugzillaReports',
+	'version' => '1.2',
+	'url' => 'https://github.com/nakal/mediawiki-bugzillareports',
+	'author' => '[https://github.com/nakal Martin Sugioarto]',
+	'description' => 'Integrates [https://www.bugzilla.org/ Bugzilla] bug tracker tabular summaries in Wiki pages'
 );
 
 
