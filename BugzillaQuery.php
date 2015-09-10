@@ -85,6 +85,7 @@ class BugzillaQuery extends BSQLQuery {
     'sort'          => 'sort',
     'sortable'      => 'boolean',   # Whether the table is sortable or not
     'status'        => 'field',
+    'status_whiteboard' => 'field',
     'style'         => 'free',      # Define the CSS style to be applied to the table
     'to'            => 'field',
     'total'         => 'columns',
