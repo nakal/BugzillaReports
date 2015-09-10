@@ -309,6 +309,24 @@ abstract class BSQLQuery {
   }
   
   #
+  # Determine whether a field is allowed
+  #
+  public function isAllowed($column) {
+  	global $wgBugzillaReports;
+  	if (!isset($wgBugzillaReports['privacy']) || !$wgBugzillaReports['privacy']) {
+  	  return TRUE;
+  	}
+
+    if ($column == 'work' || $column == 'remaining') {
+      if ($this->isRequired('to')) {
+      	$this->context->warn("Content of ".$column." column was hidden because assignee is used in the query and privacy mode is enabled.");
+      	return FALSE; 
+      }
+  	}
+    return TRUE;
+  }
+  
+  #
   # Convert date to nice words
   #
   private function getRadarFormat($value) {
