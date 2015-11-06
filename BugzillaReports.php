@@ -1,6 +1,6 @@
 <?php
 /**
- * See README for installation and usage
+ * The bugzilla report objects
  */
 
 /**
@@ -20,85 +20,193 @@
  * with this program; if not, see <http://www.gnu.org/licenses>.
  */
 
-if ( !defined( 'MEDIAWIKI' ) and !defined('BUGZILLAREPORTS')  ) {
-  die('This file is a MediaWiki extension, it is not a valid entry point' );
-}
-if ( !method_exists('ParserOutput','addHeadItem') ) {
-  die('Sorry, but your MediaWiki version is too old for BugzillaReports, please upgrade to the latest MediaWiki version.' );  
-}
-$wgBugzillaReportsIncludes = dirname(__FILE__) . '/';
+class BugzillaReports extends BMWExtension {
 
-#
-# Set up autoloading
-#
-$wgAutoloadClasses['BMWExtension']=
-  $wgBugzillaReportsIncludes."BMWExtension.php";
-$wgAutoloadClasses['BSQLQuery']=
-  $wgBugzillaReportsIncludes."BSQLQuery.php";
-$wgAutoloadClasses['BugzillaQuery']=
-  $wgBugzillaReportsIncludes."BugzillaQuery.php";
-$wgAutoloadClasses['BMysqlConnector']=
-  $wgBugzillaReportsIncludes."BMysqlConnector.php";
-$wgAutoloadClasses['BPGConnector']=
-  $wgBugzillaReportsIncludes."BPGConnector.php";
-$wgAutoloadClasses['BugzillaReport']=
-  $wgBugzillaReportsIncludes."BugzillaReport.php";
-$wgAutoloadClasses['BugzillaQueryRenderer']=
-  $wgBugzillaReportsIncludes."BugzillaQueryRenderer.php";
+  # The handle on the query object
+  var $query;
 
-$wgExtensionCredits['parserhook'][] = array(
-	'path' => __FILE__,
-	'name' => 'BugzillaReports',
-	'version' => '1.2',
-	'url' => 'https://github.com/nakal/mediawiki-bugzillareports',
-	'author' => '[https://github.com/nakal Martin Sugioarto]',
-	'description' => 'Integrates [https://www.bugzilla.org/ Bugzilla] bug tracker tabular summaries in Wiki pages'
-);
-
-
-//Avoid unstubbing $wgParser too early on modern (1.12+) MW versions, as per r35980
-if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {  
-  $wgHooks['ParserFirstCallInit'][] = 'efBugzillaReportsSetup';
-} else {
-  $wgExtensionFunctions[] = 'efBugzillaReportsSetup';
-}
-
-$wgExtensionMessagesFiles['BugzillaReports'] = $wgBugzillaReportsIncludes.
-  '/BugzillaReports.i18n.php';
-
-$wgHooks['LanguageGetMagic'][] = 'efBugzillaReportsMagic';
-
-$bzScriptPath = $wgScriptPath . '/extensions/BugzillaReports';
-
-/**
- * Register the function hook
- */
-function efBugzillaReportsSetup() {
-  global $wgParser;
-  $efBugzillaReportsHookStub = new BugzillaReportsHookStub;
+  # Default max rows for a report       
+  var $maxrowsFromConfig;
+  var $maxrowsFromConfigDefault=100;
   
-  $wgParser->setFunctionHook( 'bugzilla',
-    array(&$efBugzillaReportsHookStub,'efBugzillaReportsRender') );
-  return true;
-}
- 
-/**
- * Register the magic word
- */
-function efBugzillaReportsMagic( &$magicWords, $langCode = "en" ) {
-  $magicWords['bugzilla'] = array( 0, 'bugzilla' );
-  return true;
-}
- 
-class BugzillaReportsHookStub {  
+  var $dbdriverDefault="mysql";
+
+  # Default max rows which are used for aggregation of a bar chart report
+  var $maxrowsForBarChartFromConfig;
+  var $maxrowsForBarChartFromConfigDefault=500;
+
+  # Output raw HTML (i.e. not Wiki output)
+  var $rawHTML;
+
+  public $dbuser,$bzserver,$interwiki;
+  public $database,$host,$password;
+  public $dbdriver;
+  public $dbencoding;
+  public $instanceNameSpace;
+  
+  function __construct( &$parser ) {
+    $this->parser =& $parser; 
+  }
+
+  /**
+   * Register the function hook
+   */
+  public static function parserFirstCallInit(Parser $parser) {
+    $parser->setHook('bugzilla', 'BugzillaReports::parserHook');
+    return true;
+  }
+
   /**
    * Call to render the bugzilla report
    */
-  function efBugzillaReportsRender( &$parser) {
-    $bugzillaReport = new BugzillaReport( $parser );
+  public static function parserHook( $input, array $args, Parser $parser, PPFrame $frame ) {
+    $bugzillaReport = new BugzillaReports( $parser );
+    return $parser->recursiveTagParse( $bugzillaReport->render($args), $frame );
+  }
+
+  public function render($args) {   
+    global $wgBugzillaReports;
+    global $wgDBserver,$wgDBname,$wgDBuser,$wgDBpassword;
+
+    # Initialise query
+    $this->dbdriver=$this->getProperty("dbdriver",$this->dbdriverDefault);
+    $connector;
+    switch ($this->dbdriver) {
+      case "pg" :
+        $connector=new BPGConnector($this);       
+        break;
+      default :
+        $connector=new BMysqlConnector($this);
+    }
+    
+    $this->query=new BugzillaQuery($connector);
+
+    #
+    # Process arguments from default setting across all the wiki
+    #
+    $this->extractOptions(explode("|",$this->getProperty("default")));
+    #
+    # Process arguments for this particular query
+    #
+    $this->extractOptions($args);
+
+    if ($this->query->get("instance") != null) {
+      $this->instanceNameSpace=$this->query->get("instance");
+    }
+    
+    #
+    # Allow the user to specify alternate DB connection info by name
+    # in his query.
+    #
+    
+    if ($this->query->get("bzalternateconfig") != null) {
+#
+# The user has asked for an alternate BZ iestall to be queried.
+#
+      $alternateConfigName = $this->query->get("bzalternateconfig");
+      $bzAlternateConfigs = $this->getProperty("bzAlternateConfigs");
+      if (is_array($bzAlternateConfigs["$alternateConfigName"])) {
+#
+# We appear to have an array...set values.
+#
+        $this->dbuser=$bzAlternateConfigs["$alternateConfigName"]["user"];
+        $this->bzserver=$bzAlternateConfigs["$alternateConfigName"]["bzserver"];
+        $this->database=$bzAlternateConfigs["$alternateConfigName"]["database"];
+        $this->host=$bzAlternateConfigs["$alternateConfigName"]["host"];
+        $this->password=$bzAlternateConfigs["$alternateConfigName"]["password"];
+      }
+    } else {
+      #
+      # Use the defaults from LocalConfig
+      #
+      $this->dbuser=$this->getProperty("user",$wgDBuser);
+      $this->bzserver=$this->getProperty("bzserver", null);
+      $this->database=$this->getProperty("database");
+      $this->host=$this->getProperty("host");
+      $this->password=$this->getProperty("password");
+    }
+    
+    $this->interwiki=$this->getProperty("interwiki", null);
+    $this->dbencoding=$this->getProperty("dbencoding", "utf8");
+    $this->maxrowsFromConfig=
+      $this->getProperty("maxrows",$this->maxrowsFromConfigDefault);
+    $this->maxrowsForBarChartFromConfig=
+      $this->getProperty("maxrowsbar",
+        $this->maxrowsForBarChartFromConfigDefault);    
+    if ($this->query->get("disablecache") != null) {
+      #
+      # Extension parameter take priority on disable cache configuration
+      #
+      if ($this->query->get("disablecache") == "1") {
+        $this->disableCache();  
+      }
+    } elseif ($this->getProperty("disablecache")=="1") {
+      #
+      # ... then it's the LocalSettings property
+      #
+      $this->disableCache();
+      
+    }
+
+    /**
+     * Add CSS and Javascript to output
+     */
+    $this->parser->getOutput()->addModules('ext.bugzillareports');
+
+    $this->debug && $this->debug("Rendering BugzillaReports");
+    return $this->query->render().$this->getWarnings();
+  }
+  
+  protected function disableCache() {
+    $this->debug && $this->debug("Disabling parser cache for this page");
+    $this->parser->disableCache();
+  }
+
+  #
+  # Set value - implementation of the abstract function from BMWExtension
+  #
+  protected function set($name,$value) {
+    # debug variable is store on this object
+    if ($name=="debug") {
+      $this->$name=$value;
+    } else {
+      $this->query->set($name,$value);
+    }
+  }
+  
+  protected function getParameterRegex($name) {
+    if ($name=="debug") {
+      return "/^[12]$/";
+    } else {
+      return $this->query->getParameterRegex($name);
+    }   
+  }
+
+  function getProperty($name,$default="") {
+    global $wgBugzillaReports;
+    $value;
+    if ($this->instanceNameSpace != null &&
+      array_key_exists($this->instanceNameSpace.":".$name,$wgBugzillaReports)) {
+      $value=$wgBugzillaReports[$this->instanceNameSpace.":".$name];  
+    } elseif (array_key_exists($name,$wgBugzillaReports)) {
+      $value=$wgBugzillaReports[$name];
+    } else {
+      $value=$default;
+    }
+    $this->debug &&
+      $this->debug("Env property $name=$value");
+    return $value;
+  }
+
+    public function getErrorMessage($key) {
     $args = func_get_args();
-    array_shift( $args );
-    return $bugzillaReport->render($args);
+    array_shift( $args ); 
+    return '<strong class="error">BugzillaReports : '. 
+      wfMsgForContent($key,$args).'</strong>';  
+  }
+  
+  public function setRawHTML($bool) {
+    $this->rawHTML=$bool;
   }
 }
 ?>

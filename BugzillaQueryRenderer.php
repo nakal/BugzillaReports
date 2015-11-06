@@ -26,7 +26,7 @@ class BugzillaQueryRenderer {
   var $connector;
   var $output;
   
-  public function BugzillaQueryRenderer($query) {
+  public function __construct($query) {
     $this->query=$query;
     $this->context=$query->context;
     $this->connector=$query->connector;

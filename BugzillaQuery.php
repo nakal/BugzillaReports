@@ -288,7 +288,7 @@ class BugzillaQuery extends BSQLQuery {
   # - warn, 
   # - getErrorMessage
   # 
-  function BugzillaQuery( $connector ) {
+  function __construct( $connector ) {
     $this->setConnector($connector);
     $this->setContext($connector->getContext());
   }

@@ -23,7 +23,7 @@ class BMysqlConnector {
   protected $context;
   protected $error;
 
-  function BMysqlConnector( $context ) {
+  function __construct( $context ) {
     $this->setContext($context);
   }
   
@@ -36,8 +36,8 @@ class BMysqlConnector {
   }
 
   public function connect() {
-    $db = new mysqli($this->context->host, 
-      $this->context->dbuser, $this->context->password);
+    $db = new mysqli();
+    $db->real_connect($this->context->host, $this->context->dbuser, $this->context->password, null, null, null, MYSQLI_CLIENT_SSL);
       
     /*
      * Set character encoding
