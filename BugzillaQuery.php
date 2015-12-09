@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * A bugzilla query 
  */
@@ -627,7 +629,7 @@ class BugzillaQuery extends BSQLQuery {
         $sql.=", qaprofiles.realname as qa";
       }
     }
-    if ($this->isRequired("remaining")) {
+    if ($this->isRequired("remaining") && $this->isAllowed("remaining")) {
       $sql.=", remaining_time as remaining";
     }
     if ($this->isRequired("reopened")) {
@@ -665,7 +667,7 @@ class BugzillaQuery extends BSQLQuery {
     if ($this->isRequired("votes")) {
       $sql.=", votes";
     }
-    if ($this->isRequired("work")) {
+    if ($this->isRequired("work") && $this->isAllowed("work")) {
       $sql.=", SUM(longdescswork.work_time) as work";
     }
     #
