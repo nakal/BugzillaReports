@@ -1,5 +1,9 @@
 # mediawiki-bugzillareports
 
+## This repository is deprecated
+
+See https://github.com/jnwatts/BugzillaReports for recent updates.
+
 _Bugzilla Reports_ is a
 [MediaWiki extension](https://www.mediawiki.org/wiki/Manual:Extensions) that
 integrates the [Bugzilla](https://www.bugzilla.org/) bug tracker in
