@@ -20,6 +20,9 @@
 		"BugzillaReports": "BugzillaReports.php",
 		"BugzillaQueryRenderer": "BugzillaQueryRenderer.php"
 	},
+	"ExtensionMessagesFiles": {
+		"BugzillaReportsMagic": "BugzillaReports.i18n.php"
+	},
 	"Hooks": {
 		"ParserFirstCallInit": "BugzillaReports::parserFirstCallInit"
 	},
