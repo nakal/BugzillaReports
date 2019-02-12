@@ -146,7 +146,7 @@ abstract class BSQLQuery {
   #
   public function getParameterRegex($name) {
     $regex;
-    $typ="default";
+    $type="default";
     if (array_key_exists($name,$this->supportedParameters)) {
       $type=$this->supportedParameters[$name];
     }
