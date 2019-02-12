@@ -53,6 +53,7 @@ class BugzillaReports extends BMWExtension {
    */
   public static function parserFirstCallInit(Parser $parser) {
     $parser->setHook('bugzilla', 'BugzillaReports::parserHook');
+    $parser->setFunctionHook('bugzilla', 'BugzillaReports::parserFunctionHook');
     return true;
   }
 
@@ -60,8 +61,18 @@ class BugzillaReports extends BMWExtension {
    * Call to render the bugzilla report
    */
   public static function parserHook( $input, array $args, Parser $parser, PPFrame $frame ) {
+    $parserArgs = [&$parser];
+    foreach ($args as $k => $v) {
+      $parserArgs[] = $k."=".$v;
+    }
+    return call_user_func_array('BugzillaReports::parserFunctionHook', $parserArgs);
+  }
+
+  public static function parserFunctionHook( Parser &$parser ) {
+    $args = func_get_args();
+    array_shift($args);
     $bugzillaReport = new BugzillaReports( $parser );
-    return $parser->recursiveTagParse( $bugzillaReport->render($args), $frame );
+    return array( $parser->recursiveTagParse( $bugzillaReport->render($args), $frame ), 'noparse' => true, 'isHTML' => true);
   }
 
   public function render($args) {   
