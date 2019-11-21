@@ -72,7 +72,7 @@ class BugzillaReports extends BMWExtension {
     $args = func_get_args();
     array_shift($args);
     $bugzillaReport = new BugzillaReports( $parser );
-    return array( $parser->recursiveTagParse( $bugzillaReport->render($args), $frame ), 'noparse' => true, 'isHTML' => true);
+    return array( $parser->recursiveTagParse( $bugzillaReport->render($args) ), 'noparse' => true, 'isHTML' => true);
   }
 
   public function render($args) {   
