@@ -20,7 +20,7 @@ latest software versions.
 
 ## Supported versions
 
-* [MediaWiki](https://www.mediawiki.org/) 1.25 (probably a few older versions, too)
+* [MediaWiki](https://www.mediawiki.org/) 1.31 (probably a few older versions, too)
 * [Bugzilla](https://www.bugzilla.org/) 5.0 (version 4.4 works with
   [this older revision](https://github.com/nakal/mediawiki-bugzillareports/tree/17361a2439d5afdbb213ffc1c4575277b77f52ed))
 
