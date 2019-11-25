@@ -26,7 +26,7 @@ class BugzillaQueryRenderer {
   var $connector;
   var $output;
   
-  public function BugzillaQueryRenderer($query) {
+  public function __construct($query) {
     $this->query=$query;
     $this->context=$query->context;
     $this->connector=$query->connector;
@@ -143,7 +143,7 @@ class BugzillaQueryRenderer {
     $doGrouping=0;
     if ($this->query->getGroup()) {
       $doGrouping=1;
-      $groups=split(",",$this->query->getGroup());
+      $groups=explode(",",$this->query->getGroup());
       #
       # Prepare group counters
       #
@@ -598,7 +598,7 @@ class BugzillaQueryRenderer {
     $barArray=array();
     if (array_key_exists($this->query->get('bar'),
         $this->query->fieldValues)) {
-      foreach (split(",",
+      foreach (explode(",",
           $this->query->
             fieldValues[$this->query->get('bar')]) as $key) {
         $barArray[$key]=0;

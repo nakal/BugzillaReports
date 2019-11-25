@@ -1,0 +1,45 @@
+{
+	"name": "BugzillaReports",
+	"version": "1.2",
+	"author": "[https://github.com/nakal Martin Sugioarto]",
+	"url": "https://github.com/nakal/mediawiki-bugzillareports",
+	"description": "Integrates [https://www.bugzilla.org/ Bugzilla] bug tracker tabular summaries in Wiki pages",
+	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">= 1.29.0"
+	},
+	"ExtensionMessagesFiles": {
+		"BugzillaReports": "/BugzillaReports.i18n.php"
+	},
+	"AutoloadClasses": {
+		"BMWExtension": "BMWExtension.php",
+		"BSQLQuery": "BSQLQuery.php",
+		"BugzillaQuery": "BugzillaQuery.php",
+		"BMysqlConnector": "BMysqlConnector.php",
+		"BPGConnector": "BPGConnector.php",
+		"BugzillaReports": "BugzillaReports.php",
+		"BugzillaQueryRenderer": "BugzillaQueryRenderer.php"
+	},
+	"ExtensionMessagesFiles": {
+		"BugzillaReportsMagic": "BugzillaReports.i18n.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": "BugzillaReports::parserFirstCallInit"
+	},
+	"ResourceModules": {
+		"ext.bugzillareports": {
+			"scripts": "modules/ext.bugzillareports.js",
+			"styles": "modules/ext.bugzillareports.css"
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "BugzillaReports"
+	},
+	"config": {
+		"BugzillaReportsIncludes": {
+			"value": "/opt/mediawiki/extensions/BugzillaReports/"
+		}
+	},
+	"manifest_version": 2
+}
